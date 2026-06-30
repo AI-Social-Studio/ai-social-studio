@@ -92,6 +92,10 @@ export async function uploadFiles(files: File[]): Promise<UploadResponse> {
   return response.data;
 }
 
+export async function deleteUpload(fileId: string): Promise<void> {
+  await api.delete(`/uploads/${fileId}`);
+}
+
 export async function createDraft(payload: SaveDraftRequest): Promise<Draft> {
   const response = await api.post<Draft>("/drafts", payload);
   return response.data;

@@ -25,6 +25,7 @@ import {
 } from "./content-engine";
 import {
   createDraft,
+  deleteUpload,
   generatePosts,
   getApiErrorMessage,
   refinePost,
@@ -45,6 +46,14 @@ const DEMO_IMAGE: Record<Platform, string | undefined> = {
 type AssetPreview =
   | { kind: "image"; src: string; alt: string; objectPosition?: "top" | "center"; fileId?: string }
   | { kind: "meme"; label: string };
+
+type UploadedAssetPreview = {
+  kind: "image";
+  src: string;
+  alt: string;
+  objectPosition?: "top" | "center";
+  fileId: string;
+};
 
 type Toast = {
   id: number;
@@ -119,19 +128,19 @@ export function CampaignStudio({ initialDraft }: Props) {
     useState<Partial<Record<Platform, string>>>(initialResults);
   const [savedSnapshot, setSavedSnapshot] = useState(initialSnapshot);
   const [copied, setCopied] = useState<Platform | null>(null);
-  const [assets, setAssets] = useState<AssetPreview[]>(
-    initialFiles.length > 0 ? uploadedFilesToAssets(initialFiles) : INITIAL_ASSETS,
-  );
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(initialFiles);
+  const [showDemoAssets, setShowDemoAssets] = useState(!initialDraft && initialFiles.length === 0);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [removingFileIds, setRemovingFileIds] = useState<string[]>([]);
   const [refining, setRefining] = useState<Partial<Record<Platform, boolean>>>({});
   const [regenerating, setRegenerating] = useState<Partial<Record<Platform, boolean>>>({});
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const anySelected = PLATFORM_ORDER.some((platform) => selected[platform]);
   const activePlatforms = PLATFORM_ORDER.filter((platform) => selected[platform]);
+  const assets = uploadedFilesToAssets(uploadedFiles);
   const hasAnyContent =
     raw.trim().length > 0 ||
     uploadedFiles.length > 0 ||
@@ -267,17 +276,27 @@ export function CampaignStudio({ initialDraft }: Props) {
     setIsUploading(true);
     try {
       const response = await uploadFiles(nextFiles);
+      setShowDemoAssets(false);
       setUploadedFiles((prev) => [...prev, ...response.files]);
-      setAssets((prev) => {
-        const nextAssets = uploadedFilesToAssets(response.files);
-        return prev === INITIAL_ASSETS ? nextAssets : [...nextAssets, ...prev];
-      });
       pushToast("success", `Dodano ${response.files.length} pliki.`);
     } catch (error) {
       pushToast("error", getApiErrorMessage(error));
     } finally {
       setIsUploading(false);
       if (uploadInputRef.current) uploadInputRef.current.value = "";
+    }
+  }
+
+  async function removeUploadedFile(fileId: string) {
+    setRemovingFileIds((prev) => [...prev, fileId]);
+    try {
+      await deleteUpload(fileId);
+      setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
+      pushToast("success", "Plik został usunięty.");
+    } catch (error) {
+      pushToast("error", getApiErrorMessage(error));
+    } finally {
+      setRemovingFileIds((prev) => prev.filter((id) => id !== fileId));
     }
   }
 
@@ -384,7 +403,7 @@ export function CampaignStudio({ initialDraft }: Props) {
           <div className="flex flex-col">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-sm font-medium text-gray-700">
-                Raw Media Assets ({assets.length})
+                Raw Media Assets ({uploadedFiles.length})
               </span>
               <button
                 type="button"
@@ -404,20 +423,46 @@ export function CampaignStudio({ initialDraft }: Props) {
               />
             </div>
             <div className="grid flex-1 grid-cols-2 gap-3 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-4">
-              {assets.slice(0, 4).map((asset, index) =>
-                asset.kind === "image" ? (
-                  <AssetThumb
-                    key={asset.fileId ?? `${asset.src}-${index}`}
-                    kind="image"
-                    src={asset.src}
-                    alt={asset.alt}
-                    objectPosition={asset.objectPosition}
-                  />
-                ) : (
-                  <AssetThumb key={`${asset.label}-${index}`} kind="meme" label={asset.label} />
-                ),
-              )}
+              {assets.length > 0
+                ? assets.map((asset, index) => (
+                    <AssetThumb
+                      key={asset.fileId ?? `${asset.src}-${index}`}
+                      kind="image"
+                      src={asset.src}
+                      alt={asset.alt}
+                      objectPosition={asset.objectPosition}
+                      onRemove={asset.fileId ? () => removeUploadedFile(asset.fileId) : undefined}
+                      removing={asset.fileId ? removingFileIds.includes(asset.fileId) : false}
+                    />
+                  ))
+                : showDemoAssets
+                  ? INITIAL_ASSETS.map((asset, index) =>
+                      asset.kind === "image" ? (
+                        <AssetThumb
+                          key={asset.fileId ?? `${asset.src}-${index}`}
+                          kind="image"
+                          src={asset.src}
+                          alt={asset.alt}
+                          objectPosition={asset.objectPosition}
+                        />
+                      ) : (
+                        <AssetThumb key={`${asset.label}-${index}`} kind="meme" label={asset.label} />
+                      ),
+                    )
+                  : (
+                    <div className="col-span-2 flex min-h-[132px] flex-col items-center justify-center rounded-lg border border-gray-200 bg-white/70 px-4 text-center">
+                      <p className="text-sm font-medium text-gray-700">Nie masz jeszcze wrzuconych plików</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Dodaj obrazki, żeby AI mogło wykorzystać je przy generowaniu posta.
+                      </p>
+                    </div>
+                  )}
             </div>
+            {showDemoAssets && uploadedFiles.length === 0 ? (
+              <p className="mt-2 text-xs text-gray-500">
+                Powyżej widzisz przykładowe assety. Po pierwszym uploadzie znikną z tego widoku.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>
@@ -567,8 +612,7 @@ export function CampaignStudio({ initialDraft }: Props) {
   );
 }
 
-const DEFAULT_RAW =
-  "robiłem apkę całą noc, błędy w kodzie, zjadłem pizzę, fajne uczucie";
+const DEFAULT_RAW = "";
 const DEFAULT_PLATFORMS: Platform[] = ["linkedin", "instagram"];
 
 function buildSelectedState(platforms: Platform[]): Record<Platform, boolean> {
@@ -579,7 +623,7 @@ function buildSelectedState(platforms: Platform[]): Record<Platform, boolean> {
   };
 }
 
-function uploadedFilesToAssets(files: UploadedFile[]): AssetPreview[] {
+function uploadedFilesToAssets(files: UploadedFile[]): UploadedAssetPreview[] {
   return files.map((file) => ({
     kind: "image",
     src: file.url,
