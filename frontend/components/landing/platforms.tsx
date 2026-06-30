@@ -99,7 +99,7 @@ export function Platforms() {
                   example output
                 </p>
                 <p className="text-sm text-gray-700 leading-relaxed italic">
-                  "{p.example}"
+                  &ldquo;{p.example}&rdquo;
                 </p>
               </div>
             </div>

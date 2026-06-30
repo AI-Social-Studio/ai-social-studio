@@ -231,7 +231,7 @@ export function DitheringShader({
   const programRef = useRef<WebGLProgram | null>(null);
   const glRef = useRef<WebGL2RenderingContext | null>(null);
   const uniformsRef = useRef<Record<string, WebGLUniformLocation | null>>({});
-  const startTimeRef = useRef<number>(Date.now());
+  const startTimeRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -264,9 +264,10 @@ export function DitheringShader({
     canvas.width = width;
     canvas.height = height;
     gl.viewport(0, 0, width, height);
+    startTimeRef.current = performance.now();
 
     const render = () => {
-      const t = (Date.now() - startTimeRef.current) * 0.001 * speed;
+      const t = (performance.now() - startTimeRef.current) * 0.001 * speed;
       const ctx = glRef.current;
       const prog = programRef.current;
       if (!ctx || !prog) return;

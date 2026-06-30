@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 type Props = {
@@ -15,9 +16,9 @@ export function SidebarNavItem({ href, icon, label, active }: Props) {
     : "text-gray-600 hover:bg-gray-50";
 
   return (
-    <a href={href} className={`${base} ${state}`}>
+    <Link href={href} className={`${base} ${state}`}>
       {icon}
       {label}
-    </a>
+    </Link>
   );
 }

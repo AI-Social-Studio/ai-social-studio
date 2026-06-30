@@ -11,17 +11,14 @@ const FULL_TEXT = "The Smartest Way to Create Content.";
 
 export function Hero() {
   const [displayed, setDisplayed] = useState("");
-  const [done, setDone] = useState(false);
+  const done = displayed.length >= FULL_TEXT.length;
 
   useEffect(() => {
     renderCanvas();
   }, []);
 
   useEffect(() => {
-    if (displayed.length >= FULL_TEXT.length) {
-      setDone(true);
-      return;
-    }
+    if (displayed.length >= FULL_TEXT.length) return;
     const timeout = setTimeout(() => {
       setDisplayed(FULL_TEXT.slice(0, displayed.length + 1));
     }, 38);

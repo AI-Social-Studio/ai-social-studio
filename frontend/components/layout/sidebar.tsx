@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CaretUpDown,
   ClockCounterClockwise,
@@ -6,72 +8,74 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SidebarNavItem } from "./sidebar-nav-item";
 
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full flex-shrink-0 z-10">
-      <div className="h-16 flex items-center px-6 border-b border-gray-200">
+    <aside className="z-10 flex h-full w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white">
+      <div className="flex h-16 items-center border-b border-gray-200 px-6">
         <Link href="/">
           <Image src="/socialstudio.png" alt="socialstudio.ai" width={99} height={32} priority />
         </Link>
       </div>
 
-      <div className="p-4 flex-1 overflow-y-auto">
-        <div className="text-xs font-medium text-gray-400 mb-3 px-3 uppercase tracking-wider">
+      <div className="flex-1 overflow-y-auto p-4">
+        <div className="mb-3 px-3 text-xs font-medium uppercase tracking-wider text-gray-400">
           Main menu
         </div>
-        <nav className="space-y-1 mb-8">
+        <nav className="mb-8 space-y-1">
           <SidebarNavItem
-            href="#"
+            href="/dashboard"
             icon={<House size={18} weight="fill" />}
             label="Overview"
-            active
+            active={pathname === "/dashboard" || pathname.startsWith("/dashboard/drafts/")}
           />
           <SidebarNavItem
-            href="#"
+            href="/dashboard/history"
+            icon={<ClockCounterClockwise size={18} />}
+            label="History"
+            active={pathname === "/dashboard/history"}
+          />
+          <SidebarNavItem
+            href="/dashboard"
             icon={<Megaphone size={18} />}
             label="Brand Voice"
           />
-          <SidebarNavItem
-            href="#"
-            icon={<ClockCounterClockwise size={18} />}
-            label="History"
-          />
         </nav>
 
-        <div className="text-xs font-medium text-gray-400 mb-3 px-3 uppercase tracking-wider">
+        <div className="mb-3 px-3 text-xs font-medium uppercase tracking-wider text-gray-400">
           AI Engines
         </div>
         <nav className="space-y-1">
           <SidebarNavItem
-            href="#"
-            icon={<span className="w-2 h-2 rounded-full bg-blue-500" />}
+            href="/dashboard"
+            icon={<span className="h-2 w-2 rounded-full bg-blue-500" />}
             label="LinkedIn B2B"
           />
           <SidebarNavItem
-            href="#"
-            icon={<span className="w-2 h-2 rounded-full bg-pink-500" />}
+            href="/dashboard"
+            icon={<span className="h-2 w-2 rounded-full bg-pink-500" />}
             label="Instagram Vibe"
           />
           <SidebarNavItem
-            href="#"
-            icon={<span className="w-2 h-2 rounded-full bg-gray-300" />}
+            href="/dashboard"
+            icon={<span className="h-2 w-2 rounded-full bg-gray-300" />}
             label="X (Twitter) Short"
           />
         </nav>
       </div>
 
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center justify-between p-2 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer">
+      <div className="border-t border-gray-200 p-4">
+        <div className="flex cursor-pointer items-center justify-between rounded-xl border border-gray-200 p-2 hover:bg-gray-50">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold text-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-600">
               AS
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-900">
-                Andrew Smith
-              </div>
+              <div className="text-sm font-semibold text-gray-900">Andrew Smith</div>
               <div className="text-xs text-gray-500">andrew@gmail.com</div>
             </div>
           </div>
