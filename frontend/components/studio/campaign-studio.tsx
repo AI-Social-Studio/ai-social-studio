@@ -116,7 +116,7 @@ export function CampaignStudio({ initialDraft }: Props) {
     initialDraft?.raw ?? DEFAULT_RAW,
     initialSelected,
     initialResults,
-    initialDraft?.file_ids ?? [],
+    initialFiles.map((file) => file.id),
   );
 
   const [draftId, setDraftId] = useState(initialDraft?.id ?? null);
@@ -141,6 +141,7 @@ export function CampaignStudio({ initialDraft }: Props) {
   const anySelected = PLATFORM_ORDER.some((platform) => selected[platform]);
   const activePlatforms = PLATFORM_ORDER.filter((platform) => selected[platform]);
   const assets = uploadedFilesToAssets(uploadedFiles);
+  const isAssetMutationLocked = isGenerating || isUploading || isSaving || Object.values(regenerating).some(Boolean);
   const hasAnyContent =
     raw.trim().length > 0 ||
     uploadedFiles.length > 0 ||
@@ -288,6 +289,12 @@ export function CampaignStudio({ initialDraft }: Props) {
   }
 
   async function removeUploadedFile(fileId: string) {
+    if (isAssetMutationLocked) {
+      pushToast("info", "Poczekaj aż zakończy się generowanie lub zapis.");
+      return;
+    }
+    if (!window.confirm("Usunąć ten plik na stałe z draftu i backendu?")) return;
+
     setRemovingFileIds((prev) => [...prev, fileId]);
     try {
       await deleteUpload(fileId);
@@ -432,7 +439,14 @@ export function CampaignStudio({ initialDraft }: Props) {
                       alt={asset.alt}
                       objectPosition={asset.objectPosition}
                       onRemove={asset.fileId ? () => removeUploadedFile(asset.fileId) : undefined}
-                      removing={asset.fileId ? removingFileIds.includes(asset.fileId) : false}
+                      removeDisabled={
+                        asset.fileId ? removingFileIds.includes(asset.fileId) || isAssetMutationLocked : false
+                      }
+                      removeLabel={
+                        isAssetMutationLocked
+                          ? "Usuwanie zablokowane podczas generowania lub zapisu"
+                          : "Usuń plik"
+                      }
                     />
                   ))
                 : showDemoAssets

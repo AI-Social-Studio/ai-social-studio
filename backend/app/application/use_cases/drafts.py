@@ -100,10 +100,12 @@ async def _to_draft_view(
     storage: ObjectStorage,
 ) -> DraftView:
     uploaded_files: list[UploadedFileView] = []
+    available_file_ids: list[UUID] = []
     for file_id in draft.file_ids:
         file = await files.get(file_id)
         if file is None or file.content_type is None:
             continue
+        available_file_ids.append(file.id)
         uploaded_files.append(
             UploadedFileView(
                 id=file.id,
@@ -121,7 +123,7 @@ async def _to_draft_view(
         raw_text=draft.raw_text,
         selected_platforms=[platform.value for platform in draft.selected_platforms],
         posts={platform.value: text for platform, text in draft.posts.items()},
-        file_ids=draft.file_ids,
+        file_ids=available_file_ids,
         created_at=draft.created_at,
         updated_at=draft.updated_at,
         files=uploaded_files,

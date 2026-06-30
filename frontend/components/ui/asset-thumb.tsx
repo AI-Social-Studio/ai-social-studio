@@ -8,7 +8,8 @@ type ImageThumb = {
   alt: string;
   objectPosition?: "top" | "center";
   onRemove?: () => void;
-  removing?: boolean;
+  removeDisabled?: boolean;
+  removeLabel?: string;
 };
 
 type MemeThumb = {
@@ -34,7 +35,13 @@ export function AssetThumb(props: ImageThumb | MemeThumb) {
   if (props.src.startsWith("blob:") || props.src.startsWith("http://localhost")) {
     return (
       <div className="relative rounded-md overflow-hidden border border-gray-200 aspect-video">
-        {props.onRemove ? <RemoveButton onClick={props.onRemove} disabled={props.removing} /> : null}
+        {props.onRemove ? (
+          <RemoveButton
+            onClick={props.onRemove}
+            disabled={props.removeDisabled}
+            label={props.removeLabel}
+          />
+        ) : null}
         <img src={props.src} alt={props.alt} className={`h-full w-full ${positionClass}`} />
       </div>
     );
@@ -42,7 +49,13 @@ export function AssetThumb(props: ImageThumb | MemeThumb) {
 
   return (
     <div className="relative rounded-md overflow-hidden border border-gray-200 aspect-video">
-      {props.onRemove ? <RemoveButton onClick={props.onRemove} disabled={props.removing} /> : null}
+      {props.onRemove ? (
+        <RemoveButton
+          onClick={props.onRemove}
+          disabled={props.removeDisabled}
+          label={props.removeLabel}
+        />
+      ) : null}
       <Image
         src={props.src}
         alt={props.alt}
@@ -54,14 +67,23 @@ export function AssetThumb(props: ImageThumb | MemeThumb) {
   );
 }
 
-function RemoveButton({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+function RemoveButton({
+  onClick,
+  disabled,
+  label,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+  label?: string;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
       className="absolute right-2 top-2 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white transition-colors hover:bg-black/85 disabled:pointer-events-none disabled:opacity-50"
-      aria-label="Usuń plik"
+      aria-label={label ?? "Usuń plik"}
+      title={label ?? "Usuń plik"}
     >
       <X size={14} weight="bold" />
     </button>
