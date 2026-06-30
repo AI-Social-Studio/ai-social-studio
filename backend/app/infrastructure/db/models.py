@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import BigInteger, DateTime, String
+from sqlalchemy import BigInteger, DateTime, JSON, String, Text
 from sqlalchemy.dialects.postgresql import UUID as PgUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -20,3 +20,16 @@ class UploadedFileModel(Base):
     extension: Mapped[str] = mapped_column(String(16), nullable=False)
     size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class DraftModel(Base):
+    __tablename__ = "drafts"
+
+    id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True)
+    title: Mapped[str] = mapped_column(String(120), nullable=False)
+    raw_text: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    selected_platforms: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    posts: Mapped[dict[str, str]] = mapped_column(JSON, nullable=False, default=dict)
+    file_ids: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

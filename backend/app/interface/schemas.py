@@ -54,3 +54,33 @@ class RefineRequest(BaseModel):
 
 class RefineResponse(BaseModel):
     text: str
+
+
+class SaveDraftRequest(BaseModel):
+    title: str = Field(default="", max_length=120)
+    raw: str = Field(default="")
+    platforms: list[PlatformLiteral] = Field(default_factory=list)
+    posts: dict[str, str] = Field(default_factory=dict)
+    file_ids: list[UUID] = Field(default_factory=list)
+
+
+class DraftSummaryResponse(BaseModel):
+    id: UUID
+    title: str
+    selected_platforms: list[PlatformLiteral]
+    posts_count: int
+    raw_text_preview: str
+    updated_at: datetime
+    created_at: datetime
+
+
+class DraftResponse(BaseModel):
+    id: UUID
+    title: str
+    raw: str
+    platforms: list[PlatformLiteral]
+    posts: dict[str, str]
+    file_ids: list[UUID]
+    created_at: datetime
+    updated_at: datetime
+    files: list[UploadedFileResponse]

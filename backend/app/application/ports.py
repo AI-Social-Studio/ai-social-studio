@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import BinaryIO
 from uuid import UUID
 
-from app.domain.entities import GeneratedPost, UploadedFile
+from app.domain.entities import Draft, GeneratedPost, UploadedFile
 from app.domain.value_objects import Platform, RefineAction
 
 
@@ -53,3 +53,17 @@ class ContentGenerator(ABC):
         text: str,
         action: RefineAction,
     ) -> GeneratedPost: ...
+
+
+class DraftRepository(ABC):
+    @abstractmethod
+    async def add(self, draft: Draft) -> None: ...
+
+    @abstractmethod
+    async def update(self, draft: Draft) -> bool: ...
+
+    @abstractmethod
+    async def get(self, draft_id: UUID) -> Draft | None: ...
+
+    @abstractmethod
+    async def list_recent(self, limit: int = 50) -> list[Draft]: ...

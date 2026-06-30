@@ -19,3 +19,15 @@ class UploadedFile:
 class GeneratedPost:
     platform: Platform
     text: str
+
+
+@dataclass
+class Draft:
+    raw_text: str
+    selected_platforms: list[Platform]
+    posts: dict[Platform, str]
+    file_ids: list[UUID]
+    title: str = ""
+    id: UUID = field(default_factory=uuid4)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))

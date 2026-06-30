@@ -4,7 +4,8 @@ from functools import lru_cache
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.application.ports import ContentGenerator, FileRepository, ObjectStorage
+from app.application.ports import ContentGenerator, DraftRepository, FileRepository, ObjectStorage
+from app.application.use_cases.drafts import GetDraftUseCase, ListDraftsUseCase, SaveDraftUseCase
 from app.application.use_cases.generate_posts import (
     GeneratePostsUseCase,
     RefinePostUseCase,
@@ -18,7 +19,7 @@ from app.application.use_cases.upload_files import (
 from app.core.config import Settings, get_settings
 from app.infrastructure.ai.anthropic_client import AnthropicContentGenerator
 from app.infrastructure.ai.openrouter_client import OpenRouterContentGenerator
-from app.infrastructure.db.repositories import SqlAlchemyFileRepository
+from app.infrastructure.db.repositories import SqlAlchemyDraftRepository, SqlAlchemyFileRepository
 from app.infrastructure.db.session import Database
 from app.infrastructure.storage.minio_storage import MinioObjectStorage
 
@@ -56,6 +57,10 @@ async def get_session() -> AsyncIterator[AsyncSession]:
 
 def get_file_repository(session: AsyncSession = Depends(get_session)) -> FileRepository:
     return SqlAlchemyFileRepository(session)
+
+
+def get_draft_repository(session: AsyncSession = Depends(get_session)) -> DraftRepository:
+    return SqlAlchemyDraftRepository(session)
 
 
 def get_upload_limits(settings: Settings = Depends(get_settings)) -> UploadLimits:
@@ -123,3 +128,23 @@ def get_refine_post_use_case(
     generator: ContentGenerator = Depends(get_content_generator),
 ) -> RefinePostUseCase:
     return RefinePostUseCase(generator=generator)
+
+
+def get_save_draft_use_case(
+    drafts: DraftRepository = Depends(get_draft_repository),
+) -> SaveDraftUseCase:
+    return SaveDraftUseCase(drafts=drafts)
+
+
+def get_list_drafts_use_case(
+    drafts: DraftRepository = Depends(get_draft_repository),
+) -> ListDraftsUseCase:
+    return ListDraftsUseCase(drafts=drafts)
+
+
+def get_get_draft_use_case(
+    drafts: DraftRepository = Depends(get_draft_repository),
+    files: FileRepository = Depends(get_file_repository),
+    storage: ObjectStorage = Depends(get_object_storage),
+) -> GetDraftUseCase:
+    return GetDraftUseCase(drafts=drafts, files=files, storage=storage)
