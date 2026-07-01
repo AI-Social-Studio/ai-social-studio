@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -43,7 +43,7 @@
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04);
 }
 
-[data-theme="dark"] {
+[data-theme=dark] {
   --color-app: #0a0a0f;
   --color-surface: #111318;
   --color-surface-muted: #191b22;
@@ -71,7 +71,7 @@ body {
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-[data-theme="dark"] body {
+[data-theme=dark] body {
   color: #e5e7eb;
 }
 
@@ -174,7 +174,7 @@ button:disabled,
   animation: grid-scroll 60s linear infinite;
 }
 
-[data-theme="dark"] .hero-grid {
+[data-theme=dark] .hero-grid {
   background-image: radial-gradient(circle, rgb(255 255 255 / 0.08) 2px, transparent 1px);
 }
 
