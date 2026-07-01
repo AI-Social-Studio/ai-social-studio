@@ -1,7 +1,7 @@
 "use client";
 
+import { UserButton } from "@clerk/nextjs";
 import {
-  CaretUpDown,
   ClockCounterClockwise,
   House,
   Megaphone,
@@ -69,17 +69,12 @@ export function Sidebar() {
       </div>
 
       <div className="border-t border-gray-200 p-4">
-        <div className="flex cursor-pointer items-center justify-between rounded-xl border border-gray-200 p-2 hover:bg-gray-50">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-600">
-              AS
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-900">Andrew Smith</div>
-              <div className="text-xs text-gray-500">andrew@gmail.com</div>
-            </div>
+        <div className="flex items-center justify-between rounded-xl border border-gray-200 p-3">
+          <div>
+            <div className="text-sm font-semibold text-gray-900">Your account</div>
+            <div className="text-xs text-gray-500">Manage session and profile</div>
           </div>
-          <CaretUpDown size={14} className="text-gray-400" />
+          <UserButton />
         </div>
       </div>
     </aside>

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { ArrowRight, Plus } from "@phosphor-icons/react/dist/ssr";
 import { renderCanvas } from "@/components/ui/canvas";
 import { Button } from "@/components/ui/button";
@@ -26,12 +27,18 @@ export function Hero() {
           height={32}
           priority
         />
-        <Link href="/dashboard">
-          <Button size="sm">
-            Try it free
-            <ArrowRight size={14} className="ml-1.5" />
-          </Button>
-        </Link>
+
+        <div className="flex items-center gap-3">
+          <SignInButton>
+            <Button variant="ghost" size="sm">Sign in</Button>
+          </SignInButton>
+          <SignUpButton>
+            <Button size="sm">
+              Try it free
+              <ArrowRight size={14} className="ml-1.5" />
+            </Button>
+          </SignUpButton>
+        </div>
       </nav>
 
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 text-center animate-fade-in">
