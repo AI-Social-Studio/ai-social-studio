@@ -40,7 +40,7 @@ export async function checkRole(
   }
 
   const sessionRole = getRoleFromSessionClaims(currentSessionClaims);
-  if (sessionRole) return sessionRole === "user";
+  if (sessionRole) return sessionRole === "user" || sessionRole === "admin";
 
   if (sessionClaims) return role === "user";
 
