@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { getAuthContext } from "@/lib/auth/get-auth-context";
+import { getSessionAppRole } from "@/lib/auth/get-auth-context";
 import type { AppRole } from "@/lib/auth/roles";
 import { Sidebar } from "./sidebar";
 import { TopHeader } from "./top-header";
@@ -11,8 +11,7 @@ export async function DashboardShell({
   children: ReactNode;
   role?: AppRole;
 }) {
-  const auth = role ? null : await getAuthContext();
-  const resolvedRole = role ?? auth?.role ?? "user";
+  const resolvedRole = role ?? (await getSessionAppRole());
 
   return (
     <div className="h-screen flex overflow-hidden w-full">

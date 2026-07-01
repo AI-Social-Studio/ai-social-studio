@@ -28,7 +28,8 @@ function getRoleFromMetadata(metadata: unknown): unknown {
 
   const role = (metadata as { metadata?: unknown; role?: unknown }).metadata;
   if (role && typeof role === "object") {
-    return (role as { role?: unknown }).role;
+    const nestedRole = (role as { role?: unknown }).role;
+    if (nestedRole !== undefined && nestedRole !== null) return nestedRole;
   }
 
   return (metadata as { role?: unknown }).role ?? null;
