@@ -181,7 +181,8 @@ button:disabled,
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
   .animate-page-in,
-  .animate-icon-pop {
+  .animate-icon-pop,
+  .hero-grid {
     animation: none;
   }
 

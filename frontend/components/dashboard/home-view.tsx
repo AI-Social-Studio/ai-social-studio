@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { PlatformIconBadge } from "@/components/ui/platform-icon-badge";
-import { useDictionary } from "@/lib/i18n";
+import { useDictionary, useLanguage } from "@/lib/i18n";
 import type { DraftSummary } from "@/lib/flowforge-api";
 import type { Platform } from "@/components/studio/content-engine";
 
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export function HomeView({ last7Days, last30Days, total, recentDrafts }: Props) {
-  const dict = useDictionary();
+  const { locale, dict } = useLanguage();
 
   return (
     <DashboardShell>
@@ -71,7 +71,7 @@ export function HomeView({ last7Days, last30Days, total, recentDrafts }: Props) 
                     </p>
                   </div>
                   <div className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
-                    {formatDate(draft.updated_at)}
+                    {formatDate(draft.updated_at, locale)}
                   </div>
                 </div>
 
@@ -104,8 +104,8 @@ function StatCard({ label, value }: { label: string; value: number }) {
   );
 }
 
-function formatDate(value: string): string {
-  return new Intl.DateTimeFormat("en-US", {
+function formatDate(value: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "short",
     hour: "2-digit",

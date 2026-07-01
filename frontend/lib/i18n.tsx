@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { dictionaries, type Dictionary, type Locale } from "@/dictionaries";
 
 const STORAGE_KEY = "locale";
@@ -34,8 +34,14 @@ export function useLanguage(): { locale: Locale; setLocale: (locale: Locale) => 
     emitChange();
   }, []);
 
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   return { locale, setLocale, dict: dictionaries[locale] };
 }
+
+export const LOCALE_INIT_SCRIPT = `(function(){try{var l=localStorage.getItem("${STORAGE_KEY}");if(l!=="pl"&&l!=="en"){l="${DEFAULT_LOCALE}"}document.documentElement.lang=l}catch(e){}})();`;
 
 export function useDictionary(): Dictionary {
   return useLanguage().dict;

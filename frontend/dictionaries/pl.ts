@@ -5,6 +5,10 @@ export const pl: Dictionary = {
     signIn: "Zaloguj się",
     tryItFree: "Wypróbuj za darmo",
     goToDashboard: "Przejdź do panelu",
+    switchToDark: "Włącz ciemny motyw",
+    switchToLight: "Włącz jasny motyw",
+    darkTheme: "Ciemny motyw",
+    lightTheme: "Jasny motyw",
   },
   hero: {
     headline: "Najmądrzejszy sposób na tworzenie treści.",
@@ -268,14 +272,22 @@ export const pl: Dictionary = {
       selectPlatform: "Wybierz przynajmniej jedną platformę.",
       generateFirst: "Najpierw wygeneruj treść posta.",
       refined: "Treść została dopracowana.",
-      generated: (count) => `Wygenerowano ${count} posty.`,
+      generated: (count) => {
+        if (count === 1) return "Wygenerowano 1 post.";
+        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return `Wygenerowano ${count} posty.`;
+        return `Wygenerowano ${count} postów.`;
+      },
       noBackendContent: "Backend nie zwrócił żadnej treści.",
       noBackendContentPlatform: "Backend nie zwrócił treści dla tej platformy.",
       regenerated: (platformName) => `${platformName}: wygenerowano nową wersję.`,
       addContentFirst: "Najpierw dodaj treść lub pliki do szkicu.",
       draftUpdated: "Szkic zaktualizowany.",
       draftSaved: "Szkic zapisany.",
-      filesAdded: (count) => `Dodano ${count} pliki.`,
+      filesAdded: (count) => {
+        if (count === 1) return "Dodano 1 plik.";
+        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return `Dodano ${count} pliki.`;
+        return `Dodano ${count} plików.`;
+      },
       waitForLock: "Poczekaj aż zakończy się generowanie lub zapis.",
       fileDeleted: "Plik został usunięty.",
       postCopied: "Post skopiowany do schowka.",

@@ -15,6 +15,10 @@ export type Dictionary = {
     signIn: string;
     tryItFree: string;
     goToDashboard: string;
+    switchToDark: string;
+    switchToLight: string;
+    darkTheme: string;
+    lightTheme: string;
   };
   hero: {
     headline: string;
