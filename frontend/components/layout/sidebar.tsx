@@ -7,12 +7,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import type { AppRole } from "@/lib/auth/roles";
 import { useDictionary } from "@/lib/i18n";
 import { SidebarNavItem } from "./sidebar-nav-item";
 
-export function Sidebar() {
+export function Sidebar({ role }: { role: AppRole }) {
   const pathname = usePathname();
   const dict = useDictionary();
+  const isAdmin = role === "admin";
 
   return (
     <aside className="z-10 flex h-full w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
@@ -33,7 +35,7 @@ export function Sidebar() {
         <div className="mb-3 px-3 text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
           {dict.nav.mainMenu}
         </div>
-        <nav className="space-y-1">
+        <nav className="mb-8 space-y-1">
           <SidebarNavItem
             href="/dashboard"
             icon={<House size={18} weight="fill" />}
@@ -47,6 +49,22 @@ export function Sidebar() {
             active={pathname === "/dashboard/history" || pathname.startsWith("/dashboard/drafts/") || pathname === "/dashboard/new"}
           />
         </nav>
+
+        {isAdmin ? (
+          <>
+            <div className="mb-3 px-3 text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              {dict.nav.adminSection}
+            </div>
+            <nav className="space-y-1">
+              <SidebarNavItem
+                href="/dashboard/admin"
+                icon={<span className="h-2.5 w-2.5 rounded-full bg-violet-500" />}
+                label={dict.nav.admin}
+                active={pathname === "/dashboard/admin" || pathname.startsWith("/dashboard/admin/")}
+              />
+            </nav>
+          </>
+        ) : null}
       </div>
 
       <div className="flex items-center justify-between border-t border-gray-200 p-4 dark:border-gray-800">

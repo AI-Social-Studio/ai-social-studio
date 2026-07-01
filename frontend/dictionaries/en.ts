@@ -204,6 +204,8 @@ export const en: Dictionary = {
     myCampaigns: "My Campaigns",
     newCampaign: "New Campaign",
     draft: "Draft",
+    adminSection: "Admin",
+    admin: "Admin Workspace",
   },
   home: {
     title: "Home",

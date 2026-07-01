@@ -32,10 +32,10 @@ export function Hero() {
 
         <div className="flex items-center gap-3">
           <Show when="signed-out">
-            <SignInButton>
+            <SignInButton fallbackRedirectUrl="/dashboard" forceRedirectUrl="/dashboard">
               <Button variant="ghost" size="sm">{dict.common.signIn}</Button>
             </SignInButton>
-            <SignUpButton>
+            <SignUpButton fallbackRedirectUrl="/dashboard" forceRedirectUrl="/dashboard">
               <Button size="sm">
                 {dict.common.tryItFree}
                 <ArrowRight size={14} className="ml-1.5" />

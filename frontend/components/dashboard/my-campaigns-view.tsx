@@ -4,15 +4,16 @@ import Link from "next/link";
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { PlatformIconBadge } from "@/components/ui/platform-icon-badge";
+import type { AppRole } from "@/lib/auth/roles";
 import { useLanguage } from "@/lib/i18n";
 import type { DraftSummary } from "@/lib/flowforge-api";
 import type { Platform } from "@/components/studio/content-engine";
 
-export function MyCampaignsView({ drafts }: { drafts: DraftSummary[] }) {
+export function MyCampaignsView({ drafts, role }: { drafts: DraftSummary[]; role: AppRole }) {
   const { locale, dict } = useLanguage();
 
   return (
-    <DashboardShell>
+    <DashboardShell role={role}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="mb-1 text-2xl font-bold text-gray-900 dark:text-gray-50">{dict.myCampaigns.title}</h1>

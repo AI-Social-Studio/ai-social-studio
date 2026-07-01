@@ -4,22 +4,24 @@ import Link from "next/link";
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { PlatformIconBadge } from "@/components/ui/platform-icon-badge";
+import type { AppRole } from "@/lib/auth/roles";
 import { useLanguage } from "@/lib/i18n";
 import type { DraftSummary } from "@/lib/flowforge-api";
 import type { Platform } from "@/components/studio/content-engine";
 
 type Props = {
+  role: AppRole;
   last7Days: number;
   last30Days: number;
   total: number;
   recentDrafts: DraftSummary[];
 };
 
-export function HomeView({ last7Days, last30Days, total, recentDrafts }: Props) {
+export function HomeView({ role, last7Days, last30Days, total, recentDrafts }: Props) {
   const { locale, dict } = useLanguage();
 
   return (
-    <DashboardShell>
+    <DashboardShell role={role}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="mb-1 text-2xl font-bold text-gray-900 dark:text-gray-50">{dict.home.title}</h1>

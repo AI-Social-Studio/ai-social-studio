@@ -1,10 +1,11 @@
 import { connection } from "next/server";
 import { HomeView } from "@/components/dashboard/home-view";
 import { listDraftsServer } from "@/lib/flowforge-api-server";
+import { getSessionAppRole } from "@/lib/auth/roles";
 import type { DraftSummary } from "@/lib/flowforge-api";
 
 export default async function DashboardHomePage() {
-  const drafts = await listDraftsServer(100);
+  const [drafts, role] = await Promise.all([listDraftsServer(100), getSessionAppRole()]);
   // connection() opts this page into per-request dynamic rendering, making Date.now() safe here:
   // https://nextjs.org/docs/app/getting-started/caching#working-with-non-deterministic-operations
   await connection();
@@ -17,6 +18,7 @@ export default async function DashboardHomePage() {
 
   return (
     <HomeView
+      role={role ?? "user"}
       last7Days={last7Days}
       last30Days={last30Days}
       total={drafts.length}

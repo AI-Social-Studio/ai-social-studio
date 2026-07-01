@@ -11,6 +11,7 @@ export function TopHeader() {
   const isHome = pathname === "/dashboard";
   const isMyCampaigns = pathname === "/dashboard/history";
   const isNewCampaign = pathname === "/dashboard/new";
+  const isAdmin = pathname === "/dashboard/admin" || pathname.startsWith("/dashboard/admin/");
   const isDraft = pathname.startsWith("/dashboard/drafts/");
   const isUnderMyCampaigns = isMyCampaigns || isNewCampaign || isDraft;
 
@@ -47,7 +48,12 @@ export function TopHeader() {
           </Link>
         )}
 
-        {isNewCampaign ? (
+        {isAdmin ? (
+          <>
+            <CaretRight size={12} className="text-gray-300 dark:text-gray-700" />
+            <span className="font-medium text-gray-900 dark:text-gray-100">{dict.nav.admin}</span>
+          </>
+        ) : isNewCampaign ? (
           <>
             <CaretRight size={12} className="text-gray-300 dark:text-gray-700" />
             <span className="font-medium text-gray-900 dark:text-gray-100">{dict.nav.newCampaign}</span>

@@ -71,6 +71,8 @@ export type Dictionary = {
     myCampaigns: string;
     newCampaign: string;
     draft: string;
+    adminSection: string;
+    admin: string;
   };
   home: {
     title: string;
